@@ -1,24 +1,17 @@
-"""
-app.py
-──────
-IlmBot — Streamlit chatbot UI.
-Two tabs: 'Ask a Question' (RAG chat) and 'Verify a Claim'.
-"""
-
 import streamlit as st
 from config.config import GROQ_API_KEY, AVAILABLE_MODELS, DEFAULT_LLM_MODEL
 from models.llm import get_llm, get_direct_prompt, format_history
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
-# ── Page config ──────────────────────────────────────────────────────
+# ── Page config 
 st.set_page_config(
-    page_title="IlmBot — Quranic Knowledge Assistant",
+    page_title="iLmBot — Quranic Knowledge Assistant",
     page_icon="📖",
     layout="wide",
 )
 
-# ── Custom CSS ───────────────────────────────────────────────────────
+# ── Custom CSS 
 st.markdown("""
 <style>
     .stApp { }
@@ -27,10 +20,10 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Sidebar ──────────────────────────────────────────────────────────
+# ── Sidebar 
 with st.sidebar:
-    st.image("https://img.icons8.com/color/96/quran.png", width=64)
-    st.title("IlmBot")
+    st.image(r"C:\Users\Afreen\Desktop\ilmbot\data\ilmpath.png", width=64)
+    st.title("iLmBot")
     st.caption("Quranic knowledge · grounded in Maulana Azad's translation")
     st.divider()
 
@@ -57,19 +50,19 @@ with st.sidebar:
     st.divider()
     st.markdown(
         "**How it works**\n\n"
-        "IlmBot retrieves relevant ayahs from a FAISS index of the Quran "
+        "iLmBot retrieves relevant ayahs from a FAISS index of the Quran "
         "(Maulana Abul Kalam Azad's translation), and optionally searches "
         "the web, then answers your question with cited references."
     )
 
-# ── Session state defaults ───────────────────────────────────────────
+# ── Session state defaults 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "sources" not in st.session_state:
-    st.session_state.sources = {}  # keyed by message index
+    st.session_state.sources = {}  
 
 
-# ── Cached loaders ───────────────────────────────────────────────────
+# ── Cached loaders 
 @st.cache_resource(show_spinner="Loading Quranic index…")
 def _load_retriever():
     """Load (or build) the FAISS retriever once."""
@@ -78,12 +71,10 @@ def _load_retriever():
     return get_retriever()
 
 
-# ── Tabs ─────────────────────────────────────────────────────────────
+# ── Tabs 
 tab_ask, tab_verify = st.tabs(["📖  Ask a Question", "✅  Verify a Claim"])
 
-# =====================================================================
 # TAB 1 — Ask a Question
-# =====================================================================
 with tab_ask:
     # Display existing chat
     for idx, msg in enumerate(st.session_state.messages):
@@ -108,10 +99,62 @@ with tab_ask:
                         st.markdown("**Web results:**")
                         for w in src["web"]:
                             st.markdown(f"- [{w['title']}]({w['url']}): {w['snippet'][:150]}")
+    # Welcome section — shown only when no messages exist
+    if not st.session_state.messages:
+        st.markdown("""
+        <div style="
+            max-width: 680px;
+            margin: 2rem auto;
+            padding: 2rem;
+            text-align: center;
+            opacity: 0.7;
+        ">
+            <h2 style="font-weight: 400; margin-bottom: 0.5rem;">Welcome to iLmBot</h2>
+            <p style="font-size: 0.95rem; line-height: 1.7; color: gray;">
+                In a world where religious misinformation spreads quickly — from extremist 
+                interpretations to casual Islamophobia — it's hard to know what the Quran 
+                <em>actually</em> says.<br><br>
+                iLmBot was built to fix that. It lets you ask questions, challenge claims, 
+                and explore Quranic teachings grounded in the scholarly, progressive 
+                translation of <strong>Maulana Abul Kalam Azad</strong> — one of the most 
+                nuanced and non-extremist translations ever produced.<br><br>
+                Whether you're a Muslim seeking clarity, a non-Muslim with genuine curiosity, 
+                or someone who just heard a claim and wants to verify it — ask away.
+            </p>
+            <div style="
+                display: flex;
+                justify-content: center;
+                gap: 0.8rem;
+                margin-top: 1.5rem;
+                flex-wrap: wrap;
+            ">
+                <span style="
+                    background: rgba(128,128,128,0.1);
+                    padding: 0.4rem 0.9rem;
+                    border-radius: 1rem;
+                    font-size: 0.82rem;
+                    color: gray;
+                ">💬 "What does the Quran say about patience?"</span>
+                <span style="
+                    background: rgba(128,128,128,0.1);
+                    padding: 0.4rem 0.9rem;
+                    border-radius: 1rem;
+                    font-size: 0.82rem;
+                    color: gray;
+                ">🔍 "Does Islam oppress women?"</span>
+                <span style="
+                    background: rgba(128,128,128,0.1);
+                    padding: 0.4rem 0.9rem;
+                    border-radius: 1rem;
+                    font-size: 0.82rem;
+                    color: gray;
+                ">✅ Try the "Verify a Claim" tab</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # Chat input
     if user_input := st.chat_input("Ask about the Quran…"):
-        # Append user message
         st.session_state.messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
             st.markdown(user_input)
@@ -120,7 +163,7 @@ with tab_ask:
         with st.chat_message("assistant"):
             with st.spinner("Retrieving from Quran…"):
                 try:
-                    # ── Route ────────────────────────────────────
+                    # ── Route 
                     from utils.router import route_query
                     strategy = route_query(user_input, model_name=selected_model)
 
@@ -129,7 +172,7 @@ with tab_ask:
 
                     chat_history = format_history(st.session_state.messages[:-1])
 
-                    # ── RAG path ────────────────────────────────
+                    # ── RAG path 
                     if strategy in ("rag", "both"):
                         from utils.rag import get_rag_chain, retrieve_chunks
                         chunks = retrieve_chunks(user_input)
@@ -142,7 +185,7 @@ with tab_ask:
                         )
                         answer = rag_chain.invoke(user_input)
 
-                    # ── Web path ────────────────────────────────
+                    # ── Web path 
                     if strategy in ("web", "both"):
                         from utils.search import web_search
                         web_results = web_search(user_input)
@@ -176,7 +219,6 @@ with tab_ask:
                                 f"\n\n---\n**Additional context from the web:**\n{web_summary}"
                             )
 
-                    # ── Direct path ─────────────────────────────
                     if strategy == "direct":
                         prompt = get_direct_prompt(mode)
                         llm = get_llm(selected_model)
@@ -196,12 +238,9 @@ with tab_ask:
 
                     st.markdown(answer)
 
-                    # Save
                     msg_idx = len(st.session_state.messages)
                     st.session_state.messages.append({"role": "assistant", "content": answer})
                     st.session_state.sources[msg_idx] = source_info
-
-                    # Inline sources expander
                     with st.expander("📚 Sources"):
                         st.caption(f"**Routing:** {strategy}")
                         if source_info["chunks"]:
@@ -224,20 +263,18 @@ with tab_ask:
                     )
 
 
-# =====================================================================
 # TAB 2 — Verify a Claim
-# =====================================================================
 with tab_verify:
     st.subheader("Verify a Claim Against the Quran")
     st.markdown(
         "Paste any statement you've heard — from a religious leader, social media, "
-        "or anywhere else — and IlmBot will check it against Maulana Azad's Quran "
+        "or anywhere else — and iLmBot will check it against Maulana Azad's Quran "
         "translation."
     )
 
     claim_input = st.text_area(
         "Enter a claim to verify",
-        placeholder="e.g. 'Islam says women cannot work' or 'The Quran commands killing non-believers'",
+        placeholder="e.g. 'Islam says women cannot work'",
         height=100,
     )
 
@@ -252,7 +289,6 @@ with tab_verify:
                     from utils.claim_verifier import verify_claim
                     result = verify_claim(claim_input.strip(), model_name=selected_model)
 
-                    # ── Verdict ──────────────────────────────
                     verdict_text = result["verdict"]
                     verdict_lower = verdict_text.lower()
 
@@ -265,7 +301,7 @@ with tab_verify:
                     else:
                         st.info(f"**Verdict:** {verdict_text}")
 
-                    # ── Side-by-side evidence ────────────────
+                    # ── Side-by-side evidence 
                     col_sup, col_con = st.columns(2)
                     with col_sup:
                         st.markdown("### 🟢 Quranic Support")
@@ -274,7 +310,7 @@ with tab_verify:
                         st.markdown("### 🔴 Quranic Contradiction")
                         st.markdown(result["contradict"] or "*No contradicting evidence found.*")
 
-                    # ── Retrieved chunks ─────────────────────
+                    # ── Retrieved chunks 
                     if result["chunks"]:
                         with st.expander("📚 Retrieved Quranic passages"):
                             for i, c in enumerate(result["chunks"], 1):
@@ -289,9 +325,9 @@ with tab_verify:
                     st.error(f"Verification failed: {exc}")
 
 
-# ── Footer ───────────────────────────────────────────────────────────
+# ── Footer 
 st.divider()
 st.caption(
-    "IlmBot is an educational tool. It is not a substitute for scholarly study. "
+    "iLmBot is an educational tool. It is not a substitute for scholarly study. "
     "All Quranic references are from Maulana Abul Kalam Azad's translation."
 )
