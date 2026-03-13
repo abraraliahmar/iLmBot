@@ -22,7 +22,7 @@ st.markdown("""
 
 # ── Sidebar 
 with st.sidebar:
-    st.image(r"ilmbot\data\ilmpath.png", width=64)
+    st.image(r"iLmBot\data\ilmpath.png", width=64)
     st.title("iLmBot")
     st.caption("Quranic knowledge · grounded in Maulana Azad's translation")
     st.divider()
