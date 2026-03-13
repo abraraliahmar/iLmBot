@@ -45,7 +45,7 @@ TOP_K_RESULTS: int = 5
 # ── Paths ───────────────────────────────────────────────────────────
 FAISS_INDEX_PATH: str = "data/faiss_index"
 PDF_PATHS: list[str] = [
-    r"C:\Users\Afreen\Desktop\ilmbot\data\V1_Quran.pdf",
-    r"C:\Users\Afreen\Desktop\ilmbot\data\V2_Quran.pdf",
-    r"C:\Users\Afreen\Desktop\ilmbot\data\V3_Quran.pdf",
+    r"data/V1_Quran.pdf",
+    r"data/V2_Quran.pdf",
+    r"data/V3_Quran.pdf",
 ]
