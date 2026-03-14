@@ -1,10 +1,3 @@
-"""
-models/embeddings.py
-────────────────────
-HuggingFace embedding model (all-MiniLM-L6-v2).
-Free, local, no API key required.
-"""
-
 from langchain_huggingface import HuggingFaceEmbeddings
 from config.config import EMBEDDING_MODEL
 

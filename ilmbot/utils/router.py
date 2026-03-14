@@ -1,14 +1,3 @@
-"""
-utils/router.py
-───────────────
-Lightweight LLM-based query router.
-Classifies each user question into one of four strategies:
-  rag   — answer from the Quran FAISS index
-  web   — answer via live web search
-  both  — combine Quran retrieval + web search
-  direct — simple greeting / meta question, no retrieval needed
-"""
-
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -16,8 +5,8 @@ from langchain_core.output_parsers import StrOutputParser
 from config.config import GROQ_API_KEY, DEFAULT_LLM_MODEL
 
 _ROUTER_SYSTEM = """\
-You are a query classifier for an Islamic knowledge chatbot called IlmBot.
-IlmBot has access to two sources:
+You are a query classifier for an Islamic knowledge chatbot called iLmBot.
+iLmBot has access to two sources:
 1. A FAISS vector index of the Quran (Maulana Abul Kalam Azad translation).
 2. A live web search engine.
 

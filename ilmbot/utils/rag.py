@@ -1,9 +1,3 @@
-"""
-utils/rag.py
-────────────
-RAG pipeline: PDF ingestion → chunking → FAISS index → retrieval chain.
-"""
-
 import os
 import fitz  # PyMuPDF
 from langchain_core.documents import Document

@@ -1,10 +1,3 @@
-"""
-config/config.py
-────────────────
-Central configuration for IlmBot.
-All secrets are loaded from environment variables (never hardcoded).
-"""
-
 import os
 from dotenv import load_dotenv
 

@@ -1,15 +1,3 @@
-"""
-utils/claim_verifier.py
-───────────────────────
-"Verify a Claim" feature.
-
-Given an arbitrary statement, this module:
-1. Retrieves the most semantically relevant Quranic chunks.
-2. Asks the LLM for *supporting* evidence from the Quran.
-3. Asks the LLM for *contradicting* evidence / nuance from the Quran.
-4. Produces a final verdict via a third LLM call.
-"""
-
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 

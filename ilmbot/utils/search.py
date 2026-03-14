@@ -1,9 +1,3 @@
-"""
-utils/search.py
-───────────────
-Live web search via the Tavily API.
-"""
-
 from config.config import TAVILY_API_KEY
 
 
